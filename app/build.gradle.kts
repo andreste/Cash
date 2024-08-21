@@ -1,6 +1,9 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    kotlin("kapt")
+    kotlin("android")
+    kotlin("plugin.serialization")
+    id("com.android.application")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -66,4 +69,10 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    libs.apply {
+        implementation(bundles.hilt)
+        implementation(bundles.http)
+        kapt(hilt.android.compiler)
+    }
 }
