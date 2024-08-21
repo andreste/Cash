@@ -6,6 +6,6 @@ import retrofit2.http.GET
 
 interface StocksService {
 
-    @GET("/portfolio.json")
+    @GET("portfolio.json")
     suspend fun getStocks(): Response<StocksResponse>
 }

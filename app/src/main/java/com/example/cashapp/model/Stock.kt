@@ -7,7 +7,7 @@ data class Stock(
     val ticker: String,
     val name: String,
     val currency: String,
-    val currentPriceCents: Double,
+    val currentPriceCents: Long,
     val quantity: Int? = null,
-    val currentPriceTimestamp: String? = null
+    val currentPriceTimestamp: Long? = null
 )

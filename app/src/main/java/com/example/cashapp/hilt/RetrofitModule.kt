@@ -1,6 +1,5 @@
 package com.example.cashapp.hilt
 
-import com.example.cashapp.network.CashAppInterceptor
 import com.example.cashapp.service.StocksService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -30,12 +29,8 @@ class RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(
-        fieldwireInterceptor: CashAppInterceptor
-    ): OkHttpClient {
-        return OkHttpClient.Builder().apply {
-            addInterceptor(fieldwireInterceptor)
-        }.build()
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder().build()
     }
 
     @Singleton

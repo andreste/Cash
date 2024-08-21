@@ -37,7 +37,8 @@ class StocksViewModel @Inject constructor(
             val response = stocksRepository.getStocks()
             if (response.isSuccessful) {
                 response.body()?.let {
-                    _state.value = ViewState.Content(it.stocks)
+                    val notNullStocks = it.stocks.filter { it.quantity != null }
+                    _state.value = ViewState.Content(notNullStocks)
                 }
             } else {
                 _state.value = ViewState.Error("Could not get stocks")
