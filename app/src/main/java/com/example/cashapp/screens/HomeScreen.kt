@@ -64,7 +64,18 @@ fun HomeScreen(navController: NavController, viewModel: StocksViewModel) {
                 }
             }
 
-            is ViewState.Error -> {}
+            is ViewState.Error -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Error ${state.message}",
+                        modifier = Modifier.padding(16.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
             ViewState.Loading -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
