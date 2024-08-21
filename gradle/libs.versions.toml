@@ -14,6 +14,12 @@ hiltCompiler = "2.48.1"
 retrofit = "2.9.0"
 navigation = "2.7.6"
 kotlinxSerializationJson = "1.6.2"
+mockito-core = "4.0.0"
+mockito-kotlin = "4.0.0"
+mockk = "1.13.4"
+androidx-arch-core-testing = "2.1.0"
+coroutines-test = "1.8.1"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -44,6 +50,13 @@ okhttp3 = "com.squareup.okhttp3:okhttp:4.12.0"
 okhttp3-logging = "com.squareup.okhttp3:logging-interceptor:4.12.0"
 ktx-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2"
 ktx-serialization-converter = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0"
+
+# Testing
+mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito-core" }
+mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", version.ref = "mockito-kotlin" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidx-arch-core-testing" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines-test" }
 
 [bundles]
 hilt = ["hilt-android", "hilt-navigation"]
