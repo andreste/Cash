@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.cashapp.extension.toDollars
 import com.example.cashapp.model.Stock
 import com.example.cashapp.viewmodel.StocksViewModel
 import com.example.cashapp.viewmodel.ViewState
@@ -110,7 +111,7 @@ fun StocksRow(stock: Stock) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth(),
-                text = "${stock.currentPriceCents} ${stock.currency}"
+                text = "${stock.currentPriceCents.toDollars()} ${stock.currency}"
             )
         }
     }
