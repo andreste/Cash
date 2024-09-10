@@ -14,12 +14,18 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,58 +42,83 @@ fun HomeScreen(navController: NavController, viewModel: StocksViewModel) {
         viewModel.getStocks()
     }
 
-    viewModel.state.collectAsState().value.let { state ->
-        when (state) {
-            is ViewState.Content -> {
-                if (state.list.isEmpty()) {
+    /*
+    Upon entering a character into this view the view should apply a filter in
+    which it only shows stock objects that exactly match the stock symbol or the company name.
+    If the list does not match any stock symbol or company name then the list should render an
+    empty state indicating the result. An empty state should clearly tell the user that there are
+    no matching results. A blank screen or list of empty cells is not valid.
+     */
+
+    Column {
+        var text by remember { mutableStateOf(TextFieldValue("")) }
+
+        TextField(
+            value = text,
+            modifier = Modifier.fillMaxWidth(),
+            onValueChange = { newText ->
+                text = newText
+                viewModel.searchStocks(text.text)
+            }
+        )
+
+        viewModel.state.collectAsState().value.let { state ->
+            when (state) {
+                is ViewState.Content -> {
+                    if (state.list.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No stocks found",
+                                modifier = Modifier.padding(16.dp),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .fillMaxWidth()
+                        ) {
+                            items(state.list) {
+                                StocksRow(stock = it)
+                            }
+                        }
+                    }
+                }
+
+                is ViewState.Error -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "No stocks found",
+                            text = "Error ${state.message}",
                             modifier = Modifier.padding(16.dp),
                             textAlign = TextAlign.Center
                         )
                     }
+                }
 
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .fillMaxWidth()
+                ViewState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
                     ) {
-                        items(state.list) {
-                            StocksRow(stock = it)
-                        }
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(48.dp)
+                        )
                     }
                 }
             }
-
-            is ViewState.Error -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "Error ${state.message}",
-                        modifier = Modifier.padding(16.dp),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-            ViewState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(48.dp)
-                    )
-                }
-            }
         }
+
     }
+
+
 }
 
 @Composable

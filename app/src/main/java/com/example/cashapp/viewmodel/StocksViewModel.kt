@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 sealed class ViewState {
     data object Loading : ViewState()
-    data class Content(val list: List<Stock>) : ViewState()
+    data class Content(val list: List<Stock>, val apiList: List<Stock>) : ViewState()
     data class Error(val message: String) : ViewState()
 }
 
@@ -23,7 +23,7 @@ class StocksViewModel @Inject constructor(
 ) : ViewModel() {
     private var navController: NavController? = null
 
-    private val _state = MutableStateFlow<ViewState>(ViewState.Content(emptyList()))
+    private val _state = MutableStateFlow<ViewState>(ViewState.Loading)
     val state = _state.asStateFlow()
 
     fun start(navController: NavController) {
@@ -38,12 +38,29 @@ class StocksViewModel @Inject constructor(
             if (response.isSuccessful) {
                 response.body()?.let {
                     val notNullStocks = it.stocks.filter { it.quantity != null }
-                    _state.value = ViewState.Content(notNullStocks)
+                    _state.value = ViewState.Content(notNullStocks, notNullStocks)
                 }
             } else {
                 _state.value = ViewState.Error("Could not get stocks")
             }
         }
+    }
+
+    // search for stock symbol or company name
+    // stock.name or stock.ticker
+    fun searchStocks(query: String) {
+        if (_state.value is ViewState.Content) {
+            val internalState = _state.value as ViewState.Content
+            if (query.isEmpty()) {
+                _state.value = internalState.copy(list = internalState.apiList)
+            } else {
+                val filteredList = internalState.apiList.filter {
+                    it.name == query || it.ticker == query
+                }
+                _state.value = internalState.copy(list = filteredList)
+            }
+        }
+
     }
 
 }

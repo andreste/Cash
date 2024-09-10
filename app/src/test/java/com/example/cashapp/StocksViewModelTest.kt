@@ -136,6 +136,134 @@ class StocksViewModelTest {
         assert((viewModel.state.value as ViewState.Error).message == "Could not get stocks")
     }
 
+    @Test
+    fun `serachStocks returns list of stocks that match the name or ticker`() = testScope.runTest {
+        // Arrange
+        val mockStocks = listOf(
+            Stock(
+                ticker = "AAPL",
+                name = "Apple",
+                currency = "USD",
+                currentPriceCents = 100,
+                quantity = 10,
+                currentPriceTimestamp = 1234567890
+            ),
+            Stock(
+                ticker = "GOOG",
+                name = "Google",
+                currency = "USD",
+                currentPriceCents = 200,
+                quantity = 1,
+                currentPriceTimestamp = 12567890
+            )
+        )
+
+        val mockResponse = mockRetrofitResponse(mockStocks)
+        coEvery { stocksRepository.getStocks() } returns mockResponse
+
+        assert(viewModel.state.value is ViewState.Loading)
+
+        // Act
+        viewModel.getStocks()
+
+        // Assert
+        assert((viewModel.state.value as ViewState.Content).list.size == 2)
+        assert((viewModel.state.value as ViewState.Content).list[0].name == "Apple")
+
+        // Act
+        viewModel.searchStocks("GOOG")
+
+        // Assert
+
+        assert((viewModel.state.value as ViewState.Content).list.size == 1)
+        assert((viewModel.state.value as ViewState.Content).list[0].name == "Google")
+    }
+
+    @Test
+    fun `serachStocks returns list of stocks if query is empty`() = testScope.runTest {
+        // Arrange
+        val mockStocks = listOf(
+            Stock(
+                ticker = "AAPL",
+                name = "Apple",
+                currency = "USD",
+                currentPriceCents = 100,
+                quantity = 10,
+                currentPriceTimestamp = 1234567890
+            ),
+            Stock(
+                ticker = "GOOG",
+                name = "Google",
+                currency = "USD",
+                currentPriceCents = 200,
+                quantity = 1,
+                currentPriceTimestamp = 12567890
+            )
+        )
+
+        val mockResponse = mockRetrofitResponse(mockStocks)
+        coEvery { stocksRepository.getStocks() } returns mockResponse
+
+        assert(viewModel.state.value is ViewState.Loading)
+
+        // Act
+        viewModel.getStocks()
+
+        // Assert
+        assert((viewModel.state.value as ViewState.Content).list.size == 2)
+        assert((viewModel.state.value as ViewState.Content).list[0].name == "Apple")
+
+        // Act
+        viewModel.searchStocks("")
+
+        // Assert
+
+        assert((viewModel.state.value as ViewState.Content).list.size == 2)
+        assert((viewModel.state.value as ViewState.Content).list[1].name == "Google")
+    }
+
+    @Test
+    fun `serachStocks returns empty list of stocks when there is no match for the name or ticker`() = testScope.runTest {
+        // Arrange
+        val mockStocks = listOf(
+            Stock(
+                ticker = "AAPL",
+                name = "Apple",
+                currency = "USD",
+                currentPriceCents = 100,
+                quantity = 10,
+                currentPriceTimestamp = 1234567890
+            ),
+            Stock(
+                ticker = "GOOG",
+                name = "Google",
+                currency = "USD",
+                currentPriceCents = 200,
+                quantity = 1,
+                currentPriceTimestamp = 12567890
+            )
+        )
+
+        val mockResponse = mockRetrofitResponse(mockStocks)
+        coEvery { stocksRepository.getStocks() } returns mockResponse
+
+        assert(viewModel.state.value is ViewState.Loading)
+
+        // Act
+        viewModel.getStocks()
+
+        // Assert
+        assert((viewModel.state.value as ViewState.Content).list.size == 2)
+        assert((viewModel.state.value as ViewState.Content).list[0].name == "Apple")
+
+        // Act
+        viewModel.searchStocks("ABCD")
+
+        // Assert
+
+        assert((viewModel.state.value as ViewState.Content).list.isEmpty())
+    }
+
     private fun mockRetrofitResponse(stocks: List<Stock>): Response<StocksResponse> {
         return Response.success(StocksResponse(stocks))
     }
