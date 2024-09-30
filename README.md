@@ -1,5 +1,3 @@
-# Cash App
-
 # Architectural approach
 * This project is using an MVVM architecture.
 * It contains a ViewModel, a Repository, a Service and Data models.
